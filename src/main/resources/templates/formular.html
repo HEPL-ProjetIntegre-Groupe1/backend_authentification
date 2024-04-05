@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+
+    <body>
+        <form action="/verifyLogin" method="post" th:object="${utilisateur}">
+              <label for="username">Username:</label><br>
+              <input type="text" id="username" th:field="*{username}"><br>
+              <label for="password">Password:</label><br>
+              <input type="password" id="password" th:field="*{password}"><br>
+              <input type="submit" value="Submit">
+        </form>
+        <p th:if="${error}" style="color: red;">Invalid username or password! try : user password</p>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/saveData" method="post" th:object="${data}">
+    <label for="notSoSecretData">Enter a sentence:</label><br>
+    <input type="text" id="notSoSecretData" th:field="*{notSoSecretData}"><br>
+    <input type="hidden" th:field="*{utilisateurId}" th:value="${userId}"><br>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
