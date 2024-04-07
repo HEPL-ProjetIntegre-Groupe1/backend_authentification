@@ -1,8 +1,8 @@
 package com.example.demo.web;
 
 import com.example.demo.backend.backenLogicClass;
-import com.example.demo.database.model.data;
-import com.example.demo.database.model.utilisateur;
+import com.example.demo.database.mySql.model.data;
+import com.example.demo.database.mySql.model.utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +16,12 @@ public class webController {
     @Autowired
     private backenLogicClass backenLogicClass;
 
-    @GetMapping(value = {"/", "/login"})
+    @GetMapping("/")
+    public String home() {
+        return "home";
+    }
+
+    @GetMapping( "/login")
     public String login(Model model, @RequestParam(name = "error", defaultValue = "false") boolean error) {
         model.addAttribute("error", error);
         model.addAttribute("utilisateur", new utilisateur());

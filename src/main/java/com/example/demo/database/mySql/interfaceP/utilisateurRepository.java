@@ -1,6 +1,6 @@
-package com.example.demo.database.interfaceP;
+package com.example.demo.database.mySql.interfaceP;
 
-import com.example.demo.database.model.utilisateur;
+import com.example.demo.database.mySql.model.utilisateur;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

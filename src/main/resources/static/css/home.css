@@ -1,0 +1,10 @@
+#output-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30%; /* adjust as needed */
+    height: 100%; /* adjust as needed */
+    background-color: #f0f0f0; /* adjust as needed */
+    padding: 10px; /* adjust as needed */
+    overflow: auto; /* add scrollbar if content is too long */
+}

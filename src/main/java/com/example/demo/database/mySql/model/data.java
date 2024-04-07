@@ -1,4 +1,4 @@
-package com.example.demo.database.model;
+package com.example.demo.database.mySql.model;
 
 import jakarta.persistence.*;
 

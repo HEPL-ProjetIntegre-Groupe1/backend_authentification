@@ -1,7 +1,7 @@
-package com.example.demo.database.service;
+package com.example.demo.database.mySql.service;
 
-import com.example.demo.database.interfaceP.dataRepository;
-import com.example.demo.database.model.data;
+import com.example.demo.database.mySql.interfaceP.dataRepository;
+import com.example.demo.database.mySql.model.data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,17 @@ public class dataService {
         return dataList;
     }
 
-    public void addData(data data) {
-        repository.save(data);
+    public data addData(data data) {
+        try {
+            repository.save(data);
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public void deleteData(int id) {
+        repository.deleteById(id);
     }
 }

@@ -1,9 +1,8 @@
 package com.example.demo.REST;
 
-import com.example.demo.backend.backenLogicClass;
-import com.example.demo.database.model.data;
-import com.example.demo.database.model.utilisateur;
-import com.example.demo.database.service.dataService;
+import com.example.demo.database.mySql.model.data;
+import com.example.demo.database.mySql.model.utilisateur;
+import com.example.demo.database.mySql.service.dataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

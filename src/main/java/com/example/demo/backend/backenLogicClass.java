@@ -1,8 +1,8 @@
 package com.example.demo.backend;
 
-import com.example.demo.database.model.data;
-import com.example.demo.database.model.utilisateur;
-import com.example.demo.database.service.utilisateurService;
+import com.example.demo.database.mySql.model.data;
+import com.example.demo.database.mySql.model.utilisateur;
+import com.example.demo.database.mySql.service.utilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

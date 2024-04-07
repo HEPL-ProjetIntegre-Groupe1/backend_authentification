@@ -1,7 +1,7 @@
-package com.example.demo.database.service;
+package com.example.demo.database.mySql.service;
 
-import com.example.demo.database.interfaceP.utilisateurRepository;
-import com.example.demo.database.model.utilisateur;
+import com.example.demo.database.mySql.interfaceP.utilisateurRepository;
+import com.example.demo.database.mySql.model.utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
