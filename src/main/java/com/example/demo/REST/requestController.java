@@ -1,7 +1,7 @@
-package com.example.demo.database.mongoDB.controller;
+package com.example.demo.REST;
 
+import com.example.demo.backend.backenLogicClass;
 import com.example.demo.database.mongoDB.model.request;
-import com.example.demo.database.mongoDB.service.requestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,28 +15,28 @@ import java.util.Optional;
 @RequestMapping("/mongoDB/request")
 public class requestController {
     @Autowired
-    private requestService requestS;
+    private backenLogicClass backenLogicClass;
 
     @GetMapping("/getAll")
     public List<request> getAllrequests() {
-        return requestS.getAllrequests();
+        return backenLogicClass.getAllrequests();
     }
 
     @GetMapping("/get")
     public request getrequestById(@RequestParam String id) {
-        Optional<request> request = requestS.getrequestById(id);
+        Optional<request> request = backenLogicClass.getrequestById(id);
         return request.orElse(null);
     }
 
     @PostMapping
     public ResponseEntity<request> createrequest(@RequestBody request request) {
-        request newrequest = requestS.createrequest(request);
+        request newrequest = backenLogicClass.createrequest(request);
         return new ResponseEntity<>(newrequest, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<request> updaterequest(@RequestParam String id, @RequestBody request request) {
-        request updatedrequest = requestS.updaterequest(id, request);
+        request updatedrequest = backenLogicClass.updaterequest(id, request);
         if (updatedrequest != null) {
             return new ResponseEntity<>(updatedrequest, HttpStatus.OK);
         }
@@ -45,8 +45,8 @@ public class requestController {
 
     @DeleteMapping
     public ResponseEntity<Void> deleterequest(@RequestParam String id) {
-        if(requestS.getrequestById(id).isPresent()) {
-            requestS.deleterequest(id);
+        if(backenLogicClass.getrequestById(id).isPresent()) {
+            backenLogicClass.deleterequest(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
