@@ -33,16 +33,7 @@ public class requestService {
         return null;
     }
 
-    public boolean deleterequest(String id) {
-        try
-        {
-            requestRep.deleteById(id);
-            return true;
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return false;
-        }
+    public void deleterequest(String id) {
+        requestRep.deleteById(id);
     }
 }
