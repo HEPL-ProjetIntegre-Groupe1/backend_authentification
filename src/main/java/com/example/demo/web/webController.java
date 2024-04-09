@@ -30,10 +30,10 @@ public class webController {
 
     @PostMapping("/verifyLogin")
     public String verifyLogin(@ModelAttribute utilisateur utilisateur, Model model) {
-        if(backenLogicClass.verifyLogin("admin", "admin")) {
+        if(backenLogicClass.verifyLogin(utilisateur.getUsername(), utilisateur.getPassword())) {
             return "redirect:/inputData?userId=%d".formatted(utilisateur.getId());
         }
-        return "redirect:/formular?error=true";
+        return "redirect:/login?error=true";
     }
 
     @GetMapping("/inputData")
