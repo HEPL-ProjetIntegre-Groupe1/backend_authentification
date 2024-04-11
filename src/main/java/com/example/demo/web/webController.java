@@ -29,7 +29,7 @@ public class webController {
     }
 
     @PostMapping("/verifyLogin")
-    public String verifyLogin(@ModelAttribute utilisateur utilisateur, Model model) {
+    public String verifyLogin(@ModelAttribute utilisateur utilisateur) {
         if(backenLogicClass.verifyLogin(utilisateur.getUsername(), utilisateur.getPassword())) {
             return "redirect:/inputData?userId=%d".formatted(utilisateur.getId());
         }
@@ -45,7 +45,7 @@ public class webController {
     }
 
     @PostMapping("/saveData")
-    public String saveData(@ModelAttribute data data, Model model) {
+    public String saveData(@ModelAttribute data data) {
         if(backenLogicClass.saveData(data)) {
             return "redirect:/feelsgoodman?sentence=%s".formatted(data.getNotSoSecretData());
         }
