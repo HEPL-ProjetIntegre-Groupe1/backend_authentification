@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface utilisateurRepository extends CrudRepository<utilisateur, Integer>  {
+public interface utilisateurMysqlRepository extends CrudRepository<utilisateur, Integer>  {
     @Query("SELECT u FROM utilisateur u WHERE u.username = ?1")
     utilisateur findByUsername(String username);
 }

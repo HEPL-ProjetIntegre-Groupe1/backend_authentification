@@ -1,6 +1,6 @@
 package com.example.demo.web;
 
-import com.example.demo.backend.backenLogicClass;
+import com.example.demo.util.mySqlRequests;
 import com.example.demo.database.mySql.model.data;
 import com.example.demo.database.mySql.model.utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class webController {
     @Autowired
-    private backenLogicClass backenLogicClass;
+    private mySqlRequests mySqlRequests;
 
     @GetMapping("/")
     public String home() {
@@ -30,7 +30,7 @@ public class webController {
 
     @PostMapping("/verifyLogin")
     public String verifyLogin(@ModelAttribute utilisateur utilisateur) {
-        if(backenLogicClass.verifyLogin(utilisateur.getUsername(), utilisateur.getPassword())) {
+        if(mySqlRequests.verifyLogin(utilisateur.getUsername(), utilisateur.getPassword())) {
             return "redirect:/inputData?userId=%d".formatted(utilisateur.getId());
         }
         return "redirect:/login?error=true";
@@ -46,7 +46,7 @@ public class webController {
 
     @PostMapping("/saveData")
     public String saveData(@ModelAttribute data data) {
-        if(backenLogicClass.saveData(data)) {
+        if(mySqlRequests.saveData(data)) {
             return "redirect:/feelsgoodman?sentence=%s".formatted(data.getNotSoSecretData());
         }
         return "redirect:/sadge";
