@@ -24,7 +24,7 @@ function addRequest() {
 }
 
 function getAllRequest() {
-    fetch('/mongoDB/request/getAll', {
+    fetch('/mongoDB/request', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ function deleteRequest(id) {
 }
 
 function getAllData() {
-    fetch('/mysql/data/getAll', {
+    fetch('/mysql/data', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ function getAllData() {
 
 function getData(id) {
     if(id === undefined) {id = 1;}
-    fetch('/mysql/data/get?id='+id, {
+    fetch('/mysql/data?id='+id, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

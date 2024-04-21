@@ -1,4 +1,4 @@
-package com.example.demo.database.mongoDB.service;
+package com.example.demo.util;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +12,8 @@ public class JwtUtil {
     private String SECRET;
 
     public String generateToken(String username) {
-        // 10 days
-        long EXPIRATION_TIME = 864_000_000;
+        // 12 Hours
+        long EXPIRATION_TIME = 1000L * 60 * 60 * 12;
         return Jwts.builder()
                 .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -29,6 +29,18 @@ public class JwtUtil {
                     .getSubject();
         } catch (Exception e) {
             return null;
+        }
+    }
+    public boolean isTokenValid(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET)
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return claims.getExpiration().after(new Date());
+        } catch (Exception e) {
+            return true;
         }
     }
 }
