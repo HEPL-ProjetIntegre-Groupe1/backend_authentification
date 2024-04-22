@@ -21,8 +21,8 @@ public class inscriptionAPIController {
         return inscriptionServ.getAllInscriptions();
     }
 
-    @GetMapping("/{inscriptionId}")
-    public Inscription getInscription(@PathVariable(name = "inscriptionId") String inscriptionId) {
+    @GetMapping("/byId{inscriptionId}")
+    public Inscription getInscription(@RequestParam(name = "inscriptionId") String inscriptionId) {
         return inscriptionServ.getInscriptionById(inscriptionId);
     }
 

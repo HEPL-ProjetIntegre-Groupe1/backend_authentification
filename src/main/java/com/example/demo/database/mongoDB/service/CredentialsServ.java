@@ -10,6 +10,10 @@ public class CredentialsServ {
     @Autowired
     private CredentialsRepository credentialsRepository;
 
+    public Iterable<Credentials> getAllCredentials() {
+        return credentialsRepository.findAll();
+    }
+
     public Credentials getCredentialsByUsername(String username) {
         return credentialsRepository.findCredentialsByUsername(username);
     }
