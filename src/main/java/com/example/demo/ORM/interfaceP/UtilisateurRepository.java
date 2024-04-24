@@ -1,9 +1,8 @@
-package com.example.demo.database.mongoDB.interfaceP;
+package com.example.demo.ORM.interfaceP;
 
-import com.example.demo.database.mongoDB.model.Credentials;
-import com.example.demo.database.mongoDB.model.Utilisateur;
+import com.example.demo.ORM.model.Credentials;
+import com.example.demo.ORM.model.Utilisateur;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository

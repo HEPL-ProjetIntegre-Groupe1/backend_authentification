@@ -1,7 +1,7 @@
-package com.example.demo.database.mongoDB.service;
+package com.example.demo.ORM.service;
 
-import com.example.demo.database.mongoDB.interfaceP.InscriptionRepository;
-import com.example.demo.database.mongoDB.model.Inscription;
+import com.example.demo.ORM.interfaceP.InscriptionRepository;
+import com.example.demo.ORM.model.Inscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

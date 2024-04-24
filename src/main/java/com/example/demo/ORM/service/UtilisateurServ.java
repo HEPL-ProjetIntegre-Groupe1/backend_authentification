@@ -1,7 +1,7 @@
-package com.example.demo.database.mongoDB.service;
+package com.example.demo.ORM.service;
 
-import com.example.demo.database.mongoDB.interfaceP.UtilisateurRepository;
-import com.example.demo.database.mongoDB.model.Utilisateur;
+import com.example.demo.ORM.interfaceP.UtilisateurRepository;
+import com.example.demo.ORM.model.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

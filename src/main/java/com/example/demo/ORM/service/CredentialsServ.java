@@ -1,7 +1,7 @@
-package com.example.demo.database.mongoDB.service;
+package com.example.demo.ORM.service;
 
-import com.example.demo.database.mongoDB.interfaceP.CredentialsRepository;
-import com.example.demo.database.mongoDB.model.Credentials;
+import com.example.demo.ORM.interfaceP.CredentialsRepository;
+import com.example.demo.ORM.model.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

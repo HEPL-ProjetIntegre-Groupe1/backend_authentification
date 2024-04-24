@@ -1,8 +1,8 @@
-package com.example.demo.REST.mongoDB;
+package com.example.demo.REST;
 
-import com.example.demo.database.mongoDB.model.Inscription;
-import com.example.demo.database.mongoDB.service.InscriptionServ;
-import com.example.demo.database.mongoDB.service.UtilisateurServ;
+import com.example.demo.ORM.model.Inscription;
+import com.example.demo.ORM.service.InscriptionServ;
+import com.example.demo.ORM.service.UtilisateurServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
