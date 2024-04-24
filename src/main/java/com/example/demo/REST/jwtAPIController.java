@@ -1,7 +1,7 @@
-package com.example.demo.REST.mongoDB;
+package com.example.demo.REST;
 
 import com.example.demo.util.JwtUtil;
-import com.example.demo.database.mongoDB.service.UtilisateurServ;
+import com.example.demo.ORM.service.UtilisateurServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

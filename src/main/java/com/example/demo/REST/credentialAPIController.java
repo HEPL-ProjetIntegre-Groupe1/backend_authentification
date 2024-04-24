@@ -1,7 +1,7 @@
-package com.example.demo.REST.mongoDB;
+package com.example.demo.REST;
 
-import com.example.demo.database.mongoDB.model.Credentials;
-import com.example.demo.database.mongoDB.service.CredentialsServ;
+import com.example.demo.ORM.model.Credentials;
+import com.example.demo.ORM.service.CredentialsServ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
