@@ -1,132 +1,129 @@
 package com.example.demo.ORM.model;
 
-
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Objects;
-
 @Document(collection = "utilisateur")
 public class Utilisateur {
-    @Id
-    private String _id;
 
-    @Field(name = "Nom")
-    private String nom;
-    @Field(name = "Prenom")
-    private String prenom;
-    @Field(name = "adresse")
-    private String adresse;
-    @Field(name = "dateNaissance")
-    private String dateNaissance;
+  @Id
+  private String id;
+  @Field("nom")
+  private String nom;
+  @Field("dateNaissance")
+  private String dateNaissance;
+  @Field("numeroTelephone")
+  private String numeroTelephone;
+  @Field("registreNational")
+  private String registreNational;
+  @Field("username")
+  private String username;
+    @Field("prenom")
+  private String prenom;
+    @Field("email")
+  private String email;
+    @Field("password")
+  private String password;
+    @Field("adresse")
+  private String adresse;
+    @Field("certificat")
+  private String certificat;
 
-    @Field(name = "numeroTelephone")
-    private String numeroTelephone;
 
-    @Field(name = "registreNational")
-    private String registreNational;
+  public String getId() {
+    return id;
+  }
 
-    @DBRef
-    private Credentials credentialsRef;
-    @Transient
-    private String credentialsId;
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    @Field(name = "email")
-    private String email;
 
-    public String get_id() {
-        return _id;
-    }
+  public String getNom() {
+    return nom;
+  }
 
-    public void set_id(String _id) {
-        this._id = _id;
-    }
+  public void setNom(String nom) {
+    this.nom = nom;
+  }
 
-    public String getNom() {
-        return nom;
-    }
+  public String getDateNaissance() {
+    return dateNaissance;
+  }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
+  public void setDateNaissance(String dateNaissance) {
+    this.dateNaissance = dateNaissance;
+  }
 
-    public String getAdresse() {
-        return adresse;
-    }
 
-    public void setAdresse(String adresse) {
-        this.adresse = adresse;
-    }
+  public String getNumeroTelephone() {
+    return numeroTelephone;
+  }
 
-    public String getDateNaissance() {
-        return dateNaissance;
-    }
+  public void setNumeroTelephone(String numeroTelephone) {
+    this.numeroTelephone = numeroTelephone;
+  }
 
-    public void setDateNaissance(String dateNaissance) {
-        this.dateNaissance = dateNaissance;
-    }
 
-    public String getNumeroTelephone() {
-        return numeroTelephone;
-    }
+  public String getRegistreNational() {
+    return registreNational;
+  }
 
-    public void setNumeroTelephone(String numeroTelephone) {
-        this.numeroTelephone = numeroTelephone;
-    }
+  public void setRegistreNational(String registreNational) {
+    this.registreNational = registreNational;
+  }
 
-    public String getRegistreNational() {
-        return registreNational;
-    }
 
-    public void setRegistreNational(String registreNational) {
-        this.registreNational = registreNational;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public String getPrenom() {
-        return prenom;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setPrenom(String prenom) {
-        this.prenom = prenom;
-    }
 
-    public String getEmail() {
-        return email;
-    }
+  public String getPrenom() {
+    return prenom;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  public void setPrenom(String prenom) {
+    this.prenom = prenom;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Utilisateur that = (Utilisateur) o;
-        return Objects.equals(_id, that._id) && Objects.equals(nom, that.nom) && Objects.equals(adresse, that.adresse) && Objects.equals(dateNaissance, that.dateNaissance) && Objects.equals(numeroTelephone, that.numeroTelephone) && Objects.equals(registreNational, that.registreNational) && Objects.equals(prenom, that.prenom) && Objects.equals(email, that.email);
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(_id, nom, adresse, dateNaissance, numeroTelephone, registreNational, prenom, email);
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public Credentials getCredentials() {
-        return credentialsRef;
-    }
 
-    public void setCredentials(Credentials credentialsRef) {
-        this.credentialsRef = credentialsRef;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getCredentialsId() {
-        return credentialsId;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setCredentialsId(String credentialsId) {
-        this.credentialsId = credentialsId;
-    }
+  public String getAdresse() {
+    return adresse;
+  }
+
+  public void setAdresse(String adresse) {
+    this.adresse = adresse;
+  }
+
+
+  public String getCertificat() {
+    return certificat;
+  }
+
+  public void setCertificat(String certificat) {
+    this.certificat = certificat;
+  }
+
 }

@@ -11,8 +11,6 @@ import java.util.List;
 public class UtilisateurServ {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
-    @Autowired
-    private CredentialsServ credentialsServ;
 
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurRepository.findAll();
@@ -21,10 +19,13 @@ public class UtilisateurServ {
     public Utilisateur getUtilisateurById(String id) {
         return utilisateurRepository.findById(id).orElse(null);
     }
+    public Utilisateur getUtilisateurByNom(String nom) {
+        return utilisateurRepository.findUtilisateurByNom(nom);
+    }
+    public Utilisateur getUtilisateurByRegistreNational(String registreNational) {return utilisateurRepository.findUtilisateurByRegistreNational(registreNational);}
     public boolean insertUtilisateur(Utilisateur utilisateur) {
         try {
-            var credentials = credentialsServ.getCredentialsById(utilisateur.getCredentialsId());
-            utilisateur.setCredentials(credentials);
+            // A CHANGER
             utilisateurRepository.save(utilisateur);
             return true;
         } catch (Exception e) {
@@ -32,9 +33,6 @@ public class UtilisateurServ {
         }
     }
 
-    public Utilisateur getUtilisateurByNom(String nom) {
-        return utilisateurRepository.findUtilisateurByNom(nom);
-    }
 
     public boolean deleteUtilisateur(Utilisateur utilisateur) {
         try {
@@ -46,15 +44,12 @@ public class UtilisateurServ {
     }
 
     private Utilisateur getUserByCredentials(String username) {
-        var credentials = credentialsServ.getCredentialsByUsername(username);
-        if(credentials != null) {
-            return utilisateurRepository.findUtilisateurByCredentialsRef(credentials);
-        }
-        return null;
+        // A CHANGER
+        return utilisateurRepository.findAll().stream().findFirst().orElseThrow();
     }
     public String verifyCredentials(String username, String password) {
         var utilisateur = getUserByCredentials(username);
-        if(utilisateur != null && utilisateur.getCredentials().getPassword().equals(password)) {
+        if(utilisateur != null && utilisateur.getPassword().equals(password)) {
             return utilisateur.getNom();
         }
         return null;
