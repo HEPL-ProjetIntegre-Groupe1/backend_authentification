@@ -62,11 +62,14 @@ public class authenticationAPIController {
             }
         }
 
+        if(result == null)
+            return new ResponseEntity<>("Authentication request denied", HttpStatus.BAD_REQUEST);
+
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/{authenticationId}")
-    public ResponseEntity<String> truc(@PathVariable String authenticationId, @RequestBody bodyContent body) {
+    public ResponseEntity<String> validationRequeteAuthentification(@PathVariable String authenticationId, @RequestBody bodyContent body) {
         // RFID
         if (body.getCODE() != null) {
             var JWT = authenticationServ.verifyAuthenticationRFID(authenticationId, body.getCODE());
@@ -95,7 +98,7 @@ public class authenticationAPIController {
                 return new ResponseEntity<>(JWT, HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>("Wrong code", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("The validation method does not match the current authentication request (if any exists)", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public static class bodyContent {

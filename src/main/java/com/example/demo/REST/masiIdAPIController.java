@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/masiId")
 public class masiIdAPIController {
@@ -16,10 +18,10 @@ public class masiIdAPIController {
     UtilisateurServ utilisateurServ;
 
     @PutMapping
-    public ResponseEntity<String> inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
-        var id = utilisateurServ.inscriptionUtilisateur(utilisateur);
-        if(id != null)
-            return ResponseEntity.ok(id);
-        return ResponseEntity.badRequest().body("Registre National already exists. Sign up failed.");
+    public ResponseEntity<Map<String, String>> inscriptionUtilisateur(@RequestBody Utilisateur utilisateur) {
+        var reponse = utilisateurServ.inscriptionUtilisateur(utilisateur);
+        if(reponse != null)
+            return ResponseEntity.ok(reponse);
+        return ResponseEntity.badRequest().body(Map.of("error", "User already exists"));
     }
 }

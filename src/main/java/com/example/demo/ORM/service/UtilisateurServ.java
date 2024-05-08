@@ -1,16 +1,23 @@
 package com.example.demo.ORM.service;
 
 import com.example.demo.ORM.interfaceP.UtilisateurRepository;
+import com.example.demo.ORM.model.Registration;
 import com.example.demo.ORM.model.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UtilisateurServ {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    private AuthenticationServ authenticationServ;
+    @Autowired
+    private RegistrationServ registrationServ;
 
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurRepository.findAll();
@@ -23,13 +30,21 @@ public class UtilisateurServ {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
     public Utilisateur getUtilisateurByRegistreNational(String registreNational) {return utilisateurRepository.findUtilisateurByRegistreNational(registreNational);}
-    public String inscriptionUtilisateur(Utilisateur utilisateur) {
+    public Map<String, String> inscriptionUtilisateur(Utilisateur utilisateur) {
+        // Un utilisateur ne peut pas s'inscrire deux fois
         Utilisateur u = getUtilisateurByRegistreNational(utilisateur.getRegistreNational());
         if(u != null) {
             return null;
         }
         utilisateurRepository.save(utilisateur);
-        return utilisateur.getId();
+
+        // A sa première inscription, l'utilisateur doit s'authentifier par EID
+        var reponse = authenticationServ.requestAuthenticationEID(utilisateur.getRegistreNational());
+
+        // On ajoute une requête d'inscription pour l'utilisateur
+        authenticationServ.requestRegistration(utilisateur.getRegistreNational());
+
+        return reponse;
     }
 
     public String insertUtilisateur(Utilisateur utilisateur) {
@@ -44,6 +59,19 @@ public class UtilisateurServ {
 
     public boolean deleteUtilisateur(Utilisateur utilisateur) {
         try {
+            // Supprimer la registration
+            Registration reg = registrationServ.getRegistrationByRegistreNational(utilisateur.getRegistreNational());
+            if(reg != null) {
+                registrationServ.deleteRegistration(reg);
+            }
+
+            // Supprimer l'authentification
+            var auth = authenticationServ.getAuthenticationByRegistreNational(utilisateur.getRegistreNational());
+            if(auth != null) {
+                authenticationServ.deleteAuthentication(auth);
+            }
+
+            // Supprimer l'utilisateur
             utilisateurRepository.delete(utilisateur);
             return true;
         } catch (Exception e) {
@@ -53,9 +81,11 @@ public class UtilisateurServ {
 
     public String verifyCredentials(String username, String password) {
         var utilisateur = utilisateurRepository.findUtilisateurByUsername(username);
-        if(utilisateur != null && utilisateur.getPassword().equals(password)) {
-            return utilisateur.getNom();
+        // Si l'utilisateur n'existe pas ou que le mot de passe est incorrect ou qu'il est en cours d'inscription
+        if(utilisateur == null || !utilisateur.getPassword().equals(password) || registrationServ.getRegistrationByRegistreNational(utilisateur.getRegistreNational()) != null) {
+            return null;
         }
-        return null;
+
+        return utilisateur.getNom();
     }
 }

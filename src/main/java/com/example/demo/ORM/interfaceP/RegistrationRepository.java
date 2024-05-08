@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RegistrationRepository extends MongoRepository<Registration, String> {
-
+    Registration getRegistrationByRegistreNational(String registreNational);
 }

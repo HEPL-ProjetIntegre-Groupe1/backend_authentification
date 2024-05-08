@@ -18,7 +18,7 @@ public class jwtAPIController {
     public ResponseEntity<String> getMappingForUtilisateur(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password) {
         var utilisateurName = utilisateurServ.verifyCredentials(username, password);
         if (utilisateurName == null) {
-            return ResponseEntity.badRequest().body("Invalid credentials");
+            return ResponseEntity.badRequest().body("Logging attempt denied");
         }
 
         var JWT = jwtUtil.generateToken(utilisateurName);

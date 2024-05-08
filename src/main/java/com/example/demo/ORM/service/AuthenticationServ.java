@@ -1,6 +1,7 @@
 package com.example.demo.ORM.service;
 
 import com.example.demo.ORM.interfaceP.AuthenticationRepository;
+import com.example.demo.ORM.interfaceP.UtilisateurRepository;
 import com.example.demo.ORM.model.Authentication;
 import com.example.demo.ORM.model.Challenge;
 import com.example.demo.ORM.model.Utilisateur;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AuthenticationServ {
@@ -19,7 +21,9 @@ public class AuthenticationServ {
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
-    private UtilisateurServ utilisateurServ;
+    private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    private RegistrationServ registrationServ;
 
     public List<Authentication> getAllAuthentications() {
         return authenticationRepository.findAll();
@@ -33,16 +37,34 @@ public class AuthenticationServ {
         return authenticationRepository.getAuthenticationByRegistreNational(registreNational);
     }
 
-    private void clearPreviousAuthentication(String registreNational) {
+    public void deleteAuthentication(Authentication authentication) {
+        if(authentication != null) {
+            authenticationRepository.delete(authentication);
+        }
+    }
+
+    private boolean isAuthenticationRequestAllowed(String registreNational) {
+        // Si une inscription est en cours, l'utilisateur doit d'abord finir de s'authentifier par EID
+        if(registrationServ.getRegistrationByRegistreNational(registreNational) != null) {
+            return false;
+        }
+
         Authentication previousAuth = getAuthenticationByRegistreNational(registreNational);
         if(previousAuth != null) {
             challengeServ.deleteChallenge(previousAuth.getChallengeRef());
             authenticationRepository.delete(previousAuth);
         }
+        return true;
     }
 
-    public List<Object> requestAuthenticationEID(String registreNational) {
-        clearPreviousAuthentication(registreNational);
+    private boolean isAuthenticationVerificationAllowed(Authentication authentication) {
+        // Si une inscription est en cours, l'utilisateur doit d'abord finir de s'authentifier par EID
+        return registrationServ.getRegistrationByRegistreNational(authentication.getRegistreNational()) != null;
+    }
+
+    public Map<String, String> requestAuthenticationEID(String registreNational) {
+        if(!isAuthenticationRequestAllowed(registreNational))
+            return null;
 
         Authentication auth = new Authentication();
 
@@ -57,7 +79,7 @@ public class AuthenticationServ {
 
         // A CHANGER : créer un message crypté par la clé publique
         System.out.println("Besoin de crypter le message (AuthenticationServ)");
-        return List.of(auth.getId(), "Le message est 1234 (budget crypto limité...)");
+        return Map.of("idAuthentication", auth.getId(), "message", "Le message est 1234 (budget crypto limité...)");
     }
 
     public String verifyAuthenticationEID(String id, String message) {
@@ -70,15 +92,19 @@ public class AuthenticationServ {
         // A CHANGER : décrypter le message avec la clé privée
         System.out.println("Besoin de décrypter le message (AuthenticationServ)");
         var actualMessage = auth.getChallengeRef().getUncryptedMessage();
-        if(!actualMessage.equals(message)) {
+        if(!auth.getType().equals("EID") ||!actualMessage.equals(message)) {
             return null;
         }
+
+        // S'il y a une inscription en cours, on la termine
+        registrationServ.deleteRegistration(registrationServ.getRegistrationByRegistreNational(auth.getRegistreNational()));
 
         return getJwtTokenFromAuthentication(auth);
     }
 
     public String requestAuthenticationRFID(String registreNational) {
-        clearPreviousAuthentication(registreNational);
+        if(!isAuthenticationRequestAllowed(registreNational))
+            return null;
 
         Authentication auth = new Authentication();
 
@@ -96,14 +122,14 @@ public class AuthenticationServ {
         return auth.getId();
     }
 
-    public String verifyAuthenticationRFID(String id, String code) {
-        Authentication auth = authenticationRepository.findById(id).orElse(null);
+    public String verifyAuthenticationRFID(String idAuthentification, String code) {
+        Authentication auth = authenticationRepository.findById(idAuthentification).orElse(null);
 
-        if(auth == null) {
+        if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
         }
 
-        if(!auth.getChallengeRef().getCode().equals(code)) {
+        if(!auth.getType().equals("RFID") ||!auth.getChallengeRef().getCode().equals(code)) {
             return null;
         }
 
@@ -111,7 +137,8 @@ public class AuthenticationServ {
     }
 
     public String requestAuthenticationSMSEMAIL(String registreNational) {
-        clearPreviousAuthentication(registreNational);
+        if(!isAuthenticationRequestAllowed(registreNational))
+            return null;
 
         Authentication auth = new Authentication();
 
@@ -134,11 +161,11 @@ public class AuthenticationServ {
     public String verifyAuthenticationSMSEMAIL(String id, String code) {
         Authentication auth = authenticationRepository.findById(id).orElse(null);
 
-        if(auth == null) {
+        if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
         }
 
-        if(!auth.getChallengeRef().getCode().equals(code)) {
+        if(!auth.getType().equals("SMSEMAIL") ||!auth.getChallengeRef().getCode().equals(code)) {
             return null;
         }
 
@@ -146,7 +173,8 @@ public class AuthenticationServ {
     }
 
     public String requestAuthenticationMasiId(String registreNational) {
-        clearPreviousAuthentication(registreNational);
+        if(!isAuthenticationRequestAllowed(registreNational))
+            return null;
 
         Authentication auth = new Authentication();
 
@@ -168,11 +196,11 @@ public class AuthenticationServ {
     public String verifyAuthenticationMasiId(String id, String image) {
         Authentication auth = authenticationRepository.findById(id).orElse(null);
 
-        if(auth == null) {
+        if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
         }
 
-        if(!auth.getChallengeRef().getRightImage().equals(image)) {
+        if(!auth.getType().equals("MasiId") || !auth.getChallengeRef().getRightImage().equals(image)) {
             return null;
         }
 
@@ -181,8 +209,12 @@ public class AuthenticationServ {
 
 
     private String getJwtTokenFromAuthentication(Authentication auth) {
-        Utilisateur u = utilisateurServ.getUtilisateurByRegistreNational(auth.getRegistreNational());
+        Utilisateur u = utilisateurRepository.findUtilisateurByRegistreNational(auth.getRegistreNational());
 
         return jwtUtil.generateToken(u.getUsername());
+    }
+
+    public boolean requestRegistration(String registreNational) {
+        return registrationServ.requestRegistration(registreNational) != null;
     }
 }

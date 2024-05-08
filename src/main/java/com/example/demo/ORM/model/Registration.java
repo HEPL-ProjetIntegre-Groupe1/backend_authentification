@@ -1,9 +1,11 @@
 package com.example.demo.ORM.model;
 
+import java.util.Date;
+
 public class Registration {
 
   private String id;
-  private java.sql.Date dateExpiration;
+  private Date dateExpiration;
   private String registreNational;
 
 
@@ -16,11 +18,11 @@ public class Registration {
   }
 
 
-  public java.sql.Date getDateExpiration() {
+  public Date getDateExpiration() {
     return dateExpiration;
   }
 
-  public void setDateExpiration(java.sql.Date dateExpiration) {
+  public void setDateExpiration(Date dateExpiration) {
     this.dateExpiration = dateExpiration;
   }
 

@@ -56,7 +56,8 @@ public class utilisateurAPIController {
         if (utilisateur == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
-        utilisateurServ.deleteUtilisateur(utilisateur);
-        return ResponseEntity.ok("User deleted");
+        if(utilisateurServ.deleteUtilisateur(utilisateur))
+            return ResponseEntity.ok("User deleted");
+        return ResponseEntity.badRequest().body("Could not delete user");
     }
 }
