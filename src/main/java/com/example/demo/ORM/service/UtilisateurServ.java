@@ -23,6 +23,15 @@ public class UtilisateurServ {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
     public Utilisateur getUtilisateurByRegistreNational(String registreNational) {return utilisateurRepository.findUtilisateurByRegistreNational(registreNational);}
+    public String inscriptionUtilisateur(Utilisateur utilisateur) {
+        Utilisateur u = getUtilisateurByRegistreNational(utilisateur.getRegistreNational());
+        if(u != null) {
+            return null;
+        }
+        utilisateurRepository.save(utilisateur);
+        return utilisateur.getId();
+    }
+
     public String insertUtilisateur(Utilisateur utilisateur) {
         try {
             utilisateurRepository.save(utilisateur);
