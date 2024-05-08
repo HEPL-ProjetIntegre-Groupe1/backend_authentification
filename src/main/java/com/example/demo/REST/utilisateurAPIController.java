@@ -60,4 +60,11 @@ public class utilisateurAPIController {
             return ResponseEntity.ok("User deleted");
         return ResponseEntity.badRequest().body("Could not delete user");
     }
+
+    @PutMapping
+    public ResponseEntity<String> isUserSigningIn(@RequestParam(name = "registreNational") String registreNational) {
+        if(utilisateurServ.isUserSigningUp(registreNational))
+            return ResponseEntity.ok("User is currently signing up");
+        return ResponseEntity.ok("User is not currently signing up");
+    }
 }

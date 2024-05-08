@@ -30,6 +30,7 @@ public class UtilisateurServ {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
     public Utilisateur getUtilisateurByRegistreNational(String registreNational) {return utilisateurRepository.findUtilisateurByRegistreNational(registreNational);}
+
     public Map<String, String> inscriptionUtilisateur(Utilisateur utilisateur) {
         // Un utilisateur ne peut pas s'inscrire deux fois
         Utilisateur u = getUtilisateurByRegistreNational(utilisateur.getRegistreNational());
@@ -87,5 +88,9 @@ public class UtilisateurServ {
         }
 
         return utilisateur.getNom();
+    }
+
+    public boolean isUserSigningUp(String registreNational) {
+        return registrationServ.getRegistrationByRegistreNational(registreNational) != null;
     }
 }

@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
+
 @Document(collection = "utilisateur")
 public class Utilisateur {
 
@@ -23,12 +25,14 @@ public class Utilisateur {
   private String username;
   @Field("email")
   private String email;
-    @Field("password")
+  @Field("password")
   private String password;
-    @Field("adresse")
+  @Field("adresse")
   private String adresse;
-    @Field("certificat")
+  @Field("certificat")
   private String certificat;
+  @Field
+  private Date dateExpirationInscription;
 
 
   public String getId() {
@@ -126,4 +130,11 @@ public class Utilisateur {
     this.certificat = certificat;
   }
 
+  public Date getDateExpirationInscription() {
+    return dateExpirationInscription;
+  }
+
+  public void setDateExpirationInscription(Date dateExpirationInscription) {
+    this.dateExpirationInscription = dateExpirationInscription;
+  }
 }
