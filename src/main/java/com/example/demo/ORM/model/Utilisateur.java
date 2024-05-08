@@ -9,8 +9,10 @@ public class Utilisateur {
 
   @Id
   private String id;
-  @Field("nom")
+  @Field("Nom")
   private String nom;
+  @Field("Prenom")
+  private String prenom;
   @Field("dateNaissance")
   private String dateNaissance;
   @Field("numeroTelephone")
@@ -19,9 +21,7 @@ public class Utilisateur {
   private String registreNational;
   @Field("username")
   private String username;
-    @Field("prenom")
-  private String prenom;
-    @Field("email")
+  @Field("email")
   private String email;
     @Field("password")
   private String password;

@@ -23,13 +23,12 @@ public class UtilisateurServ {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
     public Utilisateur getUtilisateurByRegistreNational(String registreNational) {return utilisateurRepository.findUtilisateurByRegistreNational(registreNational);}
-    public boolean insertUtilisateur(Utilisateur utilisateur) {
+    public String insertUtilisateur(Utilisateur utilisateur) {
         try {
-            // A CHANGER
             utilisateurRepository.save(utilisateur);
-            return true;
+            return utilisateur.getId();
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
@@ -43,12 +42,8 @@ public class UtilisateurServ {
         }
     }
 
-    private Utilisateur getUserByCredentials(String username) {
-        // A CHANGER
-        return utilisateurRepository.findAll().stream().findFirst().orElseThrow();
-    }
     public String verifyCredentials(String username, String password) {
-        var utilisateur = getUserByCredentials(username);
+        var utilisateur = utilisateurRepository.findUtilisateurByUsername(username);
         if(utilisateur != null && utilisateur.getPassword().equals(password)) {
             return utilisateur.getNom();
         }

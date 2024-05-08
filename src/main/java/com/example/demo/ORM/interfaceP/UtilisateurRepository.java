@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface UtilisateurRepository extends MongoRepository<Utilisateur, String> {
     Utilisateur findUtilisateurByNom(String nom);
     Utilisateur findUtilisateurByRegistreNational(String registreNational);
+    Utilisateur findUtilisateurByUsername(String username);
 }

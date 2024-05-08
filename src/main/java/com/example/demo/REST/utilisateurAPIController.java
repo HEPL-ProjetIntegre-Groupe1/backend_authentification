@@ -3,41 +3,60 @@ package com.example.demo.REST;
 import com.example.demo.ORM.model.Utilisateur;
 import com.example.demo.ORM.service.UtilisateurServ;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/mongoDB/utilisateur")
+@RequestMapping("/utilisateur")
 public class utilisateurAPIController {
     @Autowired
     UtilisateurServ utilisateurServ;
 
     @GetMapping
-    public List<Utilisateur> getAllUsers() {
-        return utilisateurServ.getAllUtilisateurs();
-    }
+    public ResponseEntity<List<Utilisateur>> getUser(@RequestParam(name = "userId", required = false) String userId, @RequestParam(name = "nom", required = false) String nom, @RequestParam(name="registreNational", required = false) String registreNational) {
+        if(userId != null) {
+            var utilisateur = utilisateurServ.getUtilisateurById(userId);
+            if(utilisateur == null) {
+                return ResponseEntity.badRequest().body(List.of());
+            }
+            return ResponseEntity.ok(List.of(utilisateur));
+        }
+        if(nom != null) {
+            var utilisateur = utilisateurServ.getUtilisateurByNom(nom);
+            if(utilisateur == null) {
+                return ResponseEntity.badRequest().body(List.of());
+            }
+            return ResponseEntity.ok(List.of(utilisateur));
+        }
+        if(registreNational != null) {
+            var utilisateur = utilisateurServ.getUtilisateurByRegistreNational(registreNational);
+            if(utilisateur == null) {
+                return ResponseEntity.badRequest().body(List.of());
+            }
+            return ResponseEntity.ok(List.of(utilisateur));
+        }
 
-    @GetMapping("/byId")
-    public Utilisateur getUser(@RequestParam(name = "userId") String userId) {
-        return utilisateurServ.getUtilisateurById(userId);
-    }
-    @GetMapping("/byName")
-    public Utilisateur getUserByUsername(@RequestParam(name = "nom") String nom) {
-        return utilisateurServ.getUtilisateurByNom(nom);
+        var Utilisateurs = utilisateurServ.getAllUtilisateurs();
+        return ResponseEntity.ok(Utilisateurs);
     }
 
     @PostMapping
-    public boolean addUser(@RequestBody Utilisateur utilisateur) {
-        return utilisateurServ.insertUtilisateur(utilisateur);
+    public ResponseEntity<String> addUser(@RequestBody Utilisateur utilisateur) {
+        var id = utilisateurServ.insertUtilisateur(utilisateur);
+        if(id != null)
+            return ResponseEntity.ok(id);
+        return ResponseEntity.badRequest().body("Could not add user");
     }
 
     @DeleteMapping
-    public boolean deleteUser(@RequestParam(name = "userId") String userId) {
+    public ResponseEntity<String> deleteUser(@RequestParam(name = "userId") String userId) {
         Utilisateur utilisateur = utilisateurServ.getUtilisateurById(userId);
         if (utilisateur == null) {
-            return false;
+            return ResponseEntity.badRequest().body("User not found");
         }
-        return utilisateurServ.deleteUtilisateur(utilisateur);
+        utilisateurServ.deleteUtilisateur(utilisateur);
+        return ResponseEntity.ok("User deleted");
     }
 }

@@ -23,4 +23,13 @@ public class ChallengeServ {
             return false;
         }
     }
+
+    public boolean deleteChallenge(Challenge challenge) {
+        try {
+            challengeRepository.delete(challenge);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

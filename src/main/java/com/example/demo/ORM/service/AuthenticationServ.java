@@ -25,11 +25,30 @@ public class AuthenticationServ {
         return authenticationRepository.findAll();
     }
 
+    public Authentication getAuthenticationById(String id) {
+        return authenticationRepository.findById(id).orElse(null);
+    }
+
+    public Authentication getAuthenticationByRegistreNational(String registreNational) {
+        return authenticationRepository.getAuthenticationByRegistreNational(registreNational);
+    }
+
+    private void clearPreviousAuthentication(String registreNational) {
+        Authentication previousAuth = getAuthenticationByRegistreNational(registreNational);
+        if(previousAuth != null) {
+            challengeServ.deleteChallenge(previousAuth.getChallengeRef());
+            authenticationRepository.delete(previousAuth);
+        }
+    }
+
     public List<Object> requestAuthenticationEID(String registreNational) {
+        clearPreviousAuthentication(registreNational);
+
         Authentication auth = new Authentication();
 
         Challenge challenge = new Challenge();
         challenge.setUncryptedMessage("1234");
+        challengeServ.insertChallenge(challenge);
 
         auth.setType("EID");
         auth.setChallengeRef(challenge);
@@ -38,9 +57,7 @@ public class AuthenticationServ {
 
         // A CHANGER : créer un message crypté par la clé publique
         System.out.println("Besoin de crypter le message (AuthenticationServ)");
-        List<Object> list = List.of(auth.getId(), "Ce message est crypté");
-
-        return list;
+        return List.of(auth.getId(), "Le message est 1234 (budget crypto limité...)");
     }
 
     public String verifyAuthenticationEID(String id, String message) {
@@ -61,11 +78,14 @@ public class AuthenticationServ {
     }
 
     public String requestAuthenticationRFID(String registreNational) {
+        clearPreviousAuthentication(registreNational);
+
         Authentication auth = new Authentication();
 
         System.out.println("Besoin de générer un challenge (AuthenticationServ)");
         Challenge challenge = new Challenge();
         challenge.setCode("1234");
+        challengeServ.insertChallenge(challenge);
 
         auth.setType("RFID");
         auth.setChallengeRef(challenge);
@@ -91,11 +111,14 @@ public class AuthenticationServ {
     }
 
     public String requestAuthenticationSMSEMAIL(String registreNational) {
+        clearPreviousAuthentication(registreNational);
+
         Authentication auth = new Authentication();
 
         System.out.println("Besoin de générer un challenge (AuthenticationServ)");
         Challenge challenge = new Challenge();
         challenge.setCode("1234");
+        challengeServ.insertChallenge(challenge);
 
         auth.setType("SMSEMAIL");
         auth.setChallengeRef(challenge);
@@ -123,6 +146,8 @@ public class AuthenticationServ {
     }
 
     public String requestAuthenticationMasiId(String registreNational) {
+        clearPreviousAuthentication(registreNational);
+
         Authentication auth = new Authentication();
 
         System.out.println("Besoin de selectionner les images (AuthenticationServ)");

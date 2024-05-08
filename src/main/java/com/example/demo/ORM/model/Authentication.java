@@ -10,14 +10,15 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Authentication {
   @Id
   private String id;
-  @DBRef
-  private Challenge challengeRef;
-  @Field("registreNational")
-  private String registreNational;
-  @Transient
-  private String idChallenge;
   @Field("type")
   private String type;
+  @Field("registreNational")
+  private String registreNational;
+  @DBRef
+  private Challenge challengeRef;
+  @Transient
+  private String idChallenge;
+
 
 
   public String getId() {

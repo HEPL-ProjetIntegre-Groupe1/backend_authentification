@@ -5,68 +5,97 @@ import com.example.demo.ORM.model.Authentication;
 import com.example.demo.ORM.service.AuthenticationServ;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/mongoDB/authentication")
+@RequestMapping("/authentication")
 public class authenticationAPIController {
     @Autowired
     private AuthenticationServ authenticationServ;
 
     @GetMapping
-    public List<Authentication> getAllAuthentications() {
-        var t = authenticationServ.getAllAuthentications();
-        return t;
+    public ResponseEntity<List<Authentication>> getAllAuthentications(@RequestParam(name = "authenticationId", required = false) String authenticationId, @RequestParam(name = "registreNational", required = false) String registreNational) {
+        if (authenticationId != null) {
+            var authentication = authenticationServ.getAuthenticationById(authenticationId);
+            if(authentication == null) {
+                return ResponseEntity.badRequest().body(List.of());
+            }
+            return ResponseEntity.ok(List.of(authentication));
+        }
+        if (registreNational != null) {
+            var authentication = authenticationServ.getAuthenticationByRegistreNational(registreNational);
+            if(authentication == null) {
+                return ResponseEntity.badRequest().body(List.of());
+            }
+            return ResponseEntity.ok(List.of(authentication));
+        }
+        var authentications = authenticationServ.getAllAuthentications();
+        if (authentications.isEmpty()) {
+            return ResponseEntity.badRequest().body(authentications);
+        }
+        return ResponseEntity.ok(authentications);
     }
 
     @PutMapping
-    public String truc2(@RequestBody Map<String, String> body) {
+    public ResponseEntity<String> requeteAuthentication(@RequestBody Map<String, String> body) {
         var method = body.get("method");
         var registreNational = body.get("registreNational");
 
         if(method == null || registreNational == null) {
-            return "Error";
+            return new ResponseEntity<>("Method or Registre National missing", HttpStatus.BAD_REQUEST);
         }
 
+        String result;
         switch (method) {
-            case "EID":
-                System.out.println("A changer : réponse correcte HTTP (authenticationAPIController)");
-                var object = authenticationServ.requestAuthenticationEID(registreNational);
-                return object.get(1).toString();
-            case "RFID":
-                return authenticationServ.requestAuthenticationRFID(registreNational);
-            case "SMSEMAIL":
-                return authenticationServ.requestAuthenticationSMSEMAIL(registreNational);
-            case "MasiId":
-                return authenticationServ.requestAuthenticationMasiId(registreNational);
-            default:
-                return "Error";
+            case "EID" -> result = authenticationServ.requestAuthenticationEID(registreNational).toString();
+
+            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational);
+            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational);
+            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational);
+            default -> {
+                return new ResponseEntity<>("Wrong method", HttpStatus.BAD_REQUEST);
+            }
         }
 
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/{authenticationId}")
-    public String truc(@PathVariable String authenticationId, @RequestBody bodyContent body) {
+    public ResponseEntity<String> truc(@PathVariable String authenticationId, @RequestBody bodyContent body) {
         // RFID
         if (body.getCODE() != null) {
-            return authenticationServ.verifyAuthenticationRFID(authenticationId, body.getCODE());
+            var JWT = authenticationServ.verifyAuthenticationRFID(authenticationId, body.getCODE());
+            if (JWT != null) {
+                return new ResponseEntity<>(JWT, HttpStatus.OK);
+            }
         }
         // SMS/EMAIL
         else if (body.getDigest() != null) {
-            return authenticationServ.verifyAuthenticationSMSEMAIL(authenticationId, body.getDigest());
+            var JWT = authenticationServ.verifyAuthenticationSMSEMAIL(authenticationId, body.getDigest());
+            if (JWT != null) {
+                return new ResponseEntity<>(JWT, HttpStatus.OK);
+            }
         }
         // MasiId
         else if (body.getIcon() != null) {
-            return authenticationServ.verifyAuthenticationMasiId(authenticationId, body.getIcon());
+            var JWT = authenticationServ.verifyAuthenticationMasiId(authenticationId, body.getIcon());
+            if (JWT != null) {
+                return new ResponseEntity<>(JWT, HttpStatus.OK);
+            }
         }
         // EID
         else if (body.getChallenge() != null) {
-            return authenticationServ.verifyAuthenticationEID(authenticationId, body.getChallenge());
+            var JWT = authenticationServ.verifyAuthenticationEID(authenticationId, body.getChallenge());
+            if (JWT != null) {
+                return new ResponseEntity<>(JWT, HttpStatus.OK);
+            }
         }
-        return "Error";
+        return new ResponseEntity<>("Wrong code", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public static class bodyContent {

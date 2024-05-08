@@ -40,7 +40,7 @@ public class JwtUtil {
 
             return claims.getExpiration().after(new Date());
         } catch (Exception e) {
-            return true;
+            return false;
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.REST;
 import com.example.demo.util.JwtUtil;
 import com.example.demo.ORM.service.UtilisateurServ;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,21 +15,22 @@ public class jwtAPIController {
     private UtilisateurServ utilisateurServ;
 
     @GetMapping
-    public String getMappingForUtilisateur(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password) {
+    public ResponseEntity<String> getMappingForUtilisateur(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password) {
         var utilisateurName = utilisateurServ.verifyCredentials(username, password);
         if (utilisateurName == null) {
-            return "User not found Or Invalid Credentials";
+            return ResponseEntity.badRequest().body("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(utilisateurName);
+        var JWT = jwtUtil.generateToken(utilisateurName);
+        return ResponseEntity.ok(JWT);
     }
 
     @PostMapping
-    public String verifyToken(@RequestParam String token) {
+    public ResponseEntity<String> verifyToken(@RequestParam String token) {
         if(jwtUtil.isTokenValid(token)) {
             var utilisateur = utilisateurServ.getUtilisateurByNom(jwtUtil.extractUsername(token));
-            return "Valid token for user: " + utilisateur.getNom();
+            return ResponseEntity.ok("Valid token for user: " + utilisateur.getNom());
         }
-        return "Invalid token";
+        return ResponseEntity.badRequest().body("Invalid token");
     }
 }
