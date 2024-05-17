@@ -59,8 +59,7 @@ public class AuthenticationServ {
         Authentication previousAuth = getOngoingAuthenticationByResgistreNational(registreNational);
         if(previousAuth != null) {
             challengeServ.deleteChallenge(previousAuth.getChallengeRef());
-            previousAuth.setOnGoing(false);
-            authenticationRepository.save(previousAuth);
+            authenticationRepository.delete(previousAuth);
         }
         return true;
     }
@@ -107,6 +106,9 @@ public class AuthenticationServ {
             return null;
         }
 
+        // On termine l'authentification
+        finishAuthentification(auth);
+
         // S'il y a une inscription en cours, on la termine
         registrationServ.deleteRegistration(registrationServ.getRegistrationByRegistreNational(auth.getRegistreNational()));
 
@@ -146,6 +148,9 @@ public class AuthenticationServ {
             return null;
         }
 
+        // On termine l'authentification
+        finishAuthentification(auth);
+
         return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
@@ -184,6 +189,10 @@ public class AuthenticationServ {
             return null;
         }
 
+        // On termine l'authentification
+        finishAuthentification(auth);
+
+
         return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
@@ -221,6 +230,10 @@ public class AuthenticationServ {
             return null;
         }
 
+        // On termine l'authentification
+        finishAuthentification(auth);
+
+
         return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
@@ -233,5 +246,10 @@ public class AuthenticationServ {
 
     public boolean requestRegistration(String registreNational) {
         return registrationServ.requestRegistration(registreNational) != null;
+    }
+
+    private void finishAuthentification(Authentication auth) {
+        auth.setOnGoing(false);
+        authenticationRepository.save(auth);
     }
 }
