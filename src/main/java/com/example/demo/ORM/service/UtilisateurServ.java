@@ -22,18 +22,15 @@ public class UtilisateurServ {
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurRepository.findAll();
     }
-
     public Utilisateur getUtilisateurById(String id) {
         return utilisateurRepository.findById(id).orElse(null);
     }
     public Utilisateur getUtilisateurByNom(String nom) {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
-    public Utilisateur getUtilisateurByRegistreNational(String registreNational) {return utilisateurRepository.findUtilisateurByRegistreNational(registreNational);}
-
     public Map<String, String> inscriptionUtilisateur(Utilisateur utilisateur) {
         // Un utilisateur ne peut pas s'inscrire deux fois
-        Utilisateur u = getUtilisateurByRegistreNational(utilisateur.getRegistreNational());
+        Utilisateur u = getUtilisateurById(utilisateur.getRegistreNational());
         if(u != null) {
             return null;
         }
@@ -51,7 +48,7 @@ public class UtilisateurServ {
     public String insertUtilisateur(Utilisateur utilisateur) {
         try {
             utilisateurRepository.save(utilisateur);
-            return utilisateur.getId();
+            return utilisateur.getRegistreNational();
         } catch (Exception e) {
             return null;
         }

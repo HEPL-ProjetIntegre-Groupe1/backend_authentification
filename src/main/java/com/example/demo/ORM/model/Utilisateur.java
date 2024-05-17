@@ -8,9 +8,6 @@ import java.util.Date;
 
 @Document(collection = "utilisateur")
 public class Utilisateur {
-
-  @Id
-  private String id;
   @Field("Nom")
   private String nom;
   @Field("Prenom")
@@ -19,6 +16,7 @@ public class Utilisateur {
   private String dateNaissance;
   @Field("numeroTelephone")
   private String numeroTelephone;
+  @Id
   @Field("registreNational")
   private String registreNational;
   @Field("username")
@@ -33,15 +31,6 @@ public class Utilisateur {
   private String certificat;
   @Field
   private Date dateExpirationInscription;
-
-
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
 
   public String getNom() {

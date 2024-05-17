@@ -79,11 +79,11 @@ public class AuthenticationServ {
 
         // A CHANGER : créer un message crypté par la clé publique
         System.out.println("Besoin de crypter le message (AuthenticationServ)");
-        return Map.of("idAuthentication", auth.getId(), "message", "Le message est 1234 (budget crypto limité...)");
+        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Le message est 1234 (budget crypto limité...)");
     }
 
-    public String verifyAuthenticationEID(String id, String message) {
-        Authentication auth = authenticationRepository.findById(id).orElse(null);
+    public Map<String, String> verifyAuthenticationEID(String registreNational, String message) {
+        Authentication auth = getAuthenticationByRegistreNational(registreNational);
 
         if(auth == null) {
             return null;
@@ -99,10 +99,10 @@ public class AuthenticationServ {
         // S'il y a une inscription en cours, on la termine
         registrationServ.deleteRegistration(registrationServ.getRegistrationByRegistreNational(auth.getRegistreNational()));
 
-        return getJwtTokenFromAuthentication(auth);
+        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public String requestAuthenticationRFID(String registreNational) {
+    public Map<String, String> requestAuthenticationRFID(String registreNational) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -119,11 +119,11 @@ public class AuthenticationServ {
 
         authenticationRepository.save(auth);
 
-        return auth.getId();
+        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Le code est 1234 (budget crypto limité...)");
     }
 
-    public String verifyAuthenticationRFID(String idAuthentification, String code) {
-        Authentication auth = authenticationRepository.findById(idAuthentification).orElse(null);
+    public Map<String, String> verifyAuthenticationRFID(String registreNational, String code) {
+        Authentication auth =  getAuthenticationByRegistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
@@ -133,10 +133,10 @@ public class AuthenticationServ {
             return null;
         }
 
-        return getJwtTokenFromAuthentication(auth);
+        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public String requestAuthenticationSMSEMAIL(String registreNational) {
+    public Map<String, String> requestAuthenticationSMSEMAIL(String registreNational) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -155,11 +155,11 @@ public class AuthenticationServ {
 
         System.out.println("Besoin d'envoyer un message (AuthenticationServ)");
 
-        return auth.getId();
+        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Le code est 1234");
     }
 
-    public String verifyAuthenticationSMSEMAIL(String id, String code) {
-        Authentication auth = authenticationRepository.findById(id).orElse(null);
+    public Map<String, String> verifyAuthenticationSMSEMAIL(String registreNational, String code) {
+        Authentication auth = getAuthenticationByRegistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
@@ -169,10 +169,10 @@ public class AuthenticationServ {
             return null;
         }
 
-        return getJwtTokenFromAuthentication(auth);
+        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public String requestAuthenticationMasiId(String registreNational) {
+    public Map<String, String> requestAuthenticationMasiId(String registreNational) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -190,11 +190,11 @@ public class AuthenticationServ {
 
         authenticationRepository.save(auth);
 
-        return auth.getId();
+        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Choix entre 2,4,7 (correct : 4)");
     }
 
-    public String verifyAuthenticationMasiId(String id, String image) {
-        Authentication auth = authenticationRepository.findById(id).orElse(null);
+    public Map<String, String> verifyAuthenticationMasiId(String registreNational, String image) {
+        Authentication auth = getAuthenticationByRegistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
@@ -204,7 +204,7 @@ public class AuthenticationServ {
             return null;
         }
 
-        return getJwtTokenFromAuthentication(auth);
+        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
 

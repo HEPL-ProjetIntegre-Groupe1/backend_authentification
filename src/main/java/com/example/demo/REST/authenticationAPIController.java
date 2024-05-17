@@ -54,9 +54,9 @@ public class authenticationAPIController {
         switch (method) {
             case "EID" -> result = authenticationServ.requestAuthenticationEID(registreNational).toString();
 
-            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational);
-            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational);
-            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational);
+            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational).toString();
+            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational).toString();
+            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational).toString();
             default -> {
                 return new ResponseEntity<>("Wrong method", HttpStatus.BAD_REQUEST);
             }
@@ -68,32 +68,32 @@ public class authenticationAPIController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PutMapping("/{authenticationId}")
-    public ResponseEntity<String> validationRequeteAuthentification(@PathVariable String authenticationId, @RequestBody bodyContent body) {
+    @PutMapping("/{registreNational}")
+    public ResponseEntity<String> validationRequeteAuthentification(@PathVariable String registreNational, @RequestBody bodyContent body) {
         // RFID
         if (body.getCODE() != null) {
-            var JWT = authenticationServ.verifyAuthenticationRFID(authenticationId, body.getCODE());
+            var JWT = authenticationServ.verifyAuthenticationRFID(registreNational, body.getCODE()).toString();
             if (JWT != null) {
                 return new ResponseEntity<>(JWT, HttpStatus.OK);
             }
         }
         // SMS/EMAIL
         else if (body.getDigest() != null) {
-            var JWT = authenticationServ.verifyAuthenticationSMSEMAIL(authenticationId, body.getDigest());
+            var JWT = authenticationServ.verifyAuthenticationSMSEMAIL(registreNational, body.getDigest()).toString();
             if (JWT != null) {
                 return new ResponseEntity<>(JWT, HttpStatus.OK);
             }
         }
         // MasiId
         else if (body.getIcon() != null) {
-            var JWT = authenticationServ.verifyAuthenticationMasiId(authenticationId, body.getIcon());
+            var JWT = authenticationServ.verifyAuthenticationMasiId(registreNational, body.getIcon()).toString();
             if (JWT != null) {
                 return new ResponseEntity<>(JWT, HttpStatus.OK);
             }
         }
         // EID
         else if (body.getChallenge() != null) {
-            var JWT = authenticationServ.verifyAuthenticationEID(authenticationId, body.getChallenge());
+            var JWT = authenticationServ.verifyAuthenticationEID(registreNational, body.getChallenge()).toString();
             if (JWT != null) {
                 return new ResponseEntity<>(JWT, HttpStatus.OK);
             }

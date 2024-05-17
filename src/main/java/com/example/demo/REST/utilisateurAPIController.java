@@ -31,7 +31,7 @@ public class utilisateurAPIController {
             return ResponseEntity.ok(List.of(utilisateur));
         }
         if(registreNational != null) {
-            var utilisateur = utilisateurServ.getUtilisateurByRegistreNational(registreNational);
+            var utilisateur = utilisateurServ.getUtilisateurById(registreNational);
             if(utilisateur == null) {
                 return ResponseEntity.badRequest().body(List.of());
             }
