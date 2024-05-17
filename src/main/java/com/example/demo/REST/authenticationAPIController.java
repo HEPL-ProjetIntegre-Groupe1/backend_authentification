@@ -28,7 +28,7 @@ public class authenticationAPIController {
             return ResponseEntity.ok(List.of(authentication));
         }
         if (registreNational != null) {
-            var authentication = authenticationServ.getAuthenticationByRegistreNational(registreNational);
+            var authentication = authenticationServ.getOngoingAuthenticationByResgistreNational(registreNational);
             if(authentication == null) {
                 return ResponseEntity.badRequest().body(List.of());
             }
@@ -45,18 +45,18 @@ public class authenticationAPIController {
     public ResponseEntity<String> requeteAuthentication(@RequestBody Map<String, String> body) {
         var method = body.get("method");
         var registreNational = body.get("registreNational");
+        var device = body.get("device");
 
-        if(method == null || registreNational == null) {
-            return new ResponseEntity<>("Method or Registre National missing", HttpStatus.BAD_REQUEST);
+        if(method == null || registreNational == null || device == null) {
+            return new ResponseEntity<>("Method or Registre National or device missing", HttpStatus.BAD_REQUEST);
         }
 
         String result;
         switch (method) {
-            case "EID" -> result = authenticationServ.requestAuthenticationEID(registreNational).toString();
-
-            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational).toString();
-            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational).toString();
-            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational).toString();
+            case "EID" -> result = authenticationServ.requestAuthenticationEID(registreNational,device).toString();
+            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational,device).toString();
+            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational,device).toString();
+            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational,device).toString();
             default -> {
                 return new ResponseEntity<>("Wrong method", HttpStatus.BAD_REQUEST);
             }

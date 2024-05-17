@@ -1,11 +1,16 @@
 package com.example.demo.ORM.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Date;
 
 public class Registration {
-
+  @Id
   private String id;
+  @Field("dateExpiration")
   private Date dateExpiration;
+  @Field("registreNational")
   private String registreNational;
 
 

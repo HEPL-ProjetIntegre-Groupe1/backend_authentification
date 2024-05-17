@@ -33,8 +33,15 @@ public class AuthenticationServ {
         return authenticationRepository.findById(id).orElse(null);
     }
 
-    public Authentication getAuthenticationByRegistreNational(String registreNational) {
-        return authenticationRepository.getAuthenticationByRegistreNational(registreNational);
+    public List<Authentication> getAuthenticationByRegistreNational(String registreNational) {
+        return authenticationRepository.getAuthenticationsByRegistreNational(registreNational);
+    }
+
+    public Authentication getOngoingAuthenticationByResgistreNational(String registreNational) {
+        List<Authentication> auths =  authenticationRepository.getAuthenticationsByRegistreNationalAndOnGoingEquals(registreNational, true);
+        if(auths.isEmpty())
+            return null;
+        return auths.get(0);
     }
 
     public void deleteAuthentication(Authentication authentication) {
@@ -49,10 +56,11 @@ public class AuthenticationServ {
             return false;
         }
 
-        Authentication previousAuth = getAuthenticationByRegistreNational(registreNational);
+        Authentication previousAuth = getOngoingAuthenticationByResgistreNational(registreNational);
         if(previousAuth != null) {
             challengeServ.deleteChallenge(previousAuth.getChallengeRef());
-            authenticationRepository.delete(previousAuth);
+            previousAuth.setOnGoing(false);
+            authenticationRepository.save(previousAuth);
         }
         return true;
     }
@@ -62,7 +70,7 @@ public class AuthenticationServ {
         return registrationServ.getRegistrationByRegistreNational(authentication.getRegistreNational()) != null;
     }
 
-    public Map<String, String> requestAuthenticationEID(String registreNational) {
+    public Map<String, String> requestAuthenticationEID(String registreNational, String device) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -75,6 +83,9 @@ public class AuthenticationServ {
         auth.setType("EID");
         auth.setChallengeRef(challenge);
         auth.setRegistreNational(registreNational);
+        auth.setDeviceConnexion(device);
+        auth.setOnGoing(true);
+
         authenticationRepository.save(auth);
 
         // A CHANGER : créer un message crypté par la clé publique
@@ -83,7 +94,7 @@ public class AuthenticationServ {
     }
 
     public Map<String, String> verifyAuthenticationEID(String registreNational, String message) {
-        Authentication auth = getAuthenticationByRegistreNational(registreNational);
+        Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null) {
             return null;
@@ -102,7 +113,7 @@ public class AuthenticationServ {
         return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public Map<String, String> requestAuthenticationRFID(String registreNational) {
+    public Map<String, String> requestAuthenticationRFID(String registreNational, String device) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -116,6 +127,8 @@ public class AuthenticationServ {
         auth.setType("RFID");
         auth.setChallengeRef(challenge);
         auth.setRegistreNational(registreNational);
+        auth.setDeviceConnexion(device);
+        auth.setOnGoing(true);
 
         authenticationRepository.save(auth);
 
@@ -123,7 +136,7 @@ public class AuthenticationServ {
     }
 
     public Map<String, String> verifyAuthenticationRFID(String registreNational, String code) {
-        Authentication auth =  getAuthenticationByRegistreNational(registreNational);
+        Authentication auth =  getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
@@ -136,7 +149,7 @@ public class AuthenticationServ {
         return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public Map<String, String> requestAuthenticationSMSEMAIL(String registreNational) {
+    public Map<String, String> requestAuthenticationSMSEMAIL(String registreNational, String device) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -150,6 +163,8 @@ public class AuthenticationServ {
         auth.setType("SMSEMAIL");
         auth.setChallengeRef(challenge);
         auth.setRegistreNational(registreNational);
+        auth.setDeviceConnexion(device);
+        auth.setOnGoing(true);
 
         authenticationRepository.save(auth);
 
@@ -159,7 +174,7 @@ public class AuthenticationServ {
     }
 
     public Map<String, String> verifyAuthenticationSMSEMAIL(String registreNational, String code) {
-        Authentication auth = getAuthenticationByRegistreNational(registreNational);
+        Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
@@ -172,7 +187,7 @@ public class AuthenticationServ {
         return Map.of("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public Map<String, String> requestAuthenticationMasiId(String registreNational) {
+    public Map<String, String> requestAuthenticationMasiId(String registreNational, String device) {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -187,6 +202,8 @@ public class AuthenticationServ {
         auth.setType("MasiId");
         auth.setChallengeRef(challenge);
         auth.setRegistreNational(registreNational);
+        auth.setDeviceConnexion(device);
+        auth.setOnGoing(true);
 
         authenticationRepository.save(auth);
 
@@ -194,7 +211,7 @@ public class AuthenticationServ {
     }
 
     public Map<String, String> verifyAuthenticationMasiId(String registreNational, String image) {
-        Authentication auth = getAuthenticationByRegistreNational(registreNational);
+        Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;

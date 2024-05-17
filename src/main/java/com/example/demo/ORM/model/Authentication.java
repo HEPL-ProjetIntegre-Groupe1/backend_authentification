@@ -14,6 +14,10 @@ public class Authentication {
   private String type;
   @Field("registreNational")
   private String registreNational;
+  @Field("onGoing")
+  private boolean onGoing;
+  @Field("deviceConnexion")
+  private String deviceConnexion;
   @DBRef
   private Challenge challengeRef;
   @Transient
@@ -62,5 +66,21 @@ public class Authentication {
 
   public void setRegistreNational(String registreNational) {
     this.registreNational = registreNational;
+  }
+
+  public boolean isOnGoing() {
+    return onGoing;
+  }
+
+  public void setOnGoing(boolean onGoing) {
+    this.onGoing = onGoing;
+  }
+
+  public String getDeviceConnexion() {
+    return deviceConnexion;
+  }
+
+  public void setDeviceConnexion(String deviceConnexion) {
+    this.deviceConnexion = deviceConnexion;
   }
 }

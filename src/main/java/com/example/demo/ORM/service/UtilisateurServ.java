@@ -28,7 +28,7 @@ public class UtilisateurServ {
     public Utilisateur getUtilisateurByNom(String nom) {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
-    public Map<String, String> inscriptionUtilisateur(Utilisateur utilisateur) {
+    public Map<String, String> inscriptionUtilisateur(Utilisateur utilisateur, String device) {
         // Un utilisateur ne peut pas s'inscrire deux fois
         Utilisateur u = getUtilisateurById(utilisateur.getRegistreNational());
         if(u != null) {
@@ -37,7 +37,7 @@ public class UtilisateurServ {
         utilisateurRepository.save(utilisateur);
 
         // A sa première inscription, l'utilisateur doit s'authentifier par EID
-        var reponse = authenticationServ.requestAuthenticationEID(utilisateur.getRegistreNational());
+        var reponse = authenticationServ.requestAuthenticationEID(utilisateur.getRegistreNational(), device);
 
         // On ajoute une requête d'inscription pour l'utilisateur
         authenticationServ.requestRegistration(utilisateur.getRegistreNational());
@@ -64,7 +64,7 @@ public class UtilisateurServ {
             }
 
             // Supprimer l'authentification
-            var auth = authenticationServ.getAuthenticationByRegistreNational(utilisateur.getRegistreNational());
+            var auth = authenticationServ.getOngoingAuthenticationByResgistreNational(utilisateur.getRegistreNational());
             if(auth != null) {
                 authenticationServ.deleteAuthentication(auth);
             }
