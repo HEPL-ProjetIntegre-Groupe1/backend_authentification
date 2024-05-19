@@ -3,6 +3,8 @@ package com.example.demo.ORM.service;
 import com.example.demo.ORM.interfaceP.UtilisateurRepository;
 import com.example.demo.ORM.model.Registration;
 import com.example.demo.ORM.model.Utilisateur;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class UtilisateurServ {
     public Utilisateur getUtilisateurByNom(String nom) {
         return utilisateurRepository.findUtilisateurByNom(nom);
     }
-    public Map<String, String> inscriptionUtilisateur(Utilisateur utilisateur, String device) {
+    public JSONObject inscriptionUtilisateur(Utilisateur utilisateur, String device) throws JSONException {
         // Un utilisateur ne peut pas s'inscrire deux fois
         Utilisateur u = getUtilisateurById(utilisateur.getRegistreNational());
         if(u != null) {

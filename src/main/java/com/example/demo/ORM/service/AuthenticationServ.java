@@ -6,11 +6,15 @@ import com.example.demo.ORM.model.Authentication;
 import com.example.demo.ORM.model.Challenge;
 import com.example.demo.ORM.model.Utilisateur;
 import com.example.demo.util.JwtUtil;
+import com.example.demo.util.randomGenerator;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class AuthenticationServ {
@@ -24,6 +28,8 @@ public class AuthenticationServ {
     private UtilisateurRepository utilisateurRepository;
     @Autowired
     private RegistrationServ registrationServ;
+    @Autowired
+    private randomGenerator randomGenerator;
 
     public List<Authentication> getAllAuthentications() {
         return authenticationRepository.findAll();
@@ -67,7 +73,7 @@ public class AuthenticationServ {
         return registrationServ.getRegistrationByRegistreNational(authentication.getRegistreNational()) != null;
     }
 
-    public Map<String, String> requestAuthenticationEID(String registreNational, String device) {
+    public JSONObject requestAuthenticationEID(String registreNational, String device) throws JSONException {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -87,10 +93,13 @@ public class AuthenticationServ {
 
         // A CHANGER : créer un message crypté par la clé publique
         System.out.println("Besoin de crypter le message (AuthenticationServ)");
-        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Le message est 1234 (budget crypto limité...)");
+        return new JSONObject()
+                .put("idAuthentication", auth.getId())
+                .put("registreNational",registreNational)
+                .put("message", "Le message est 1234 (budget crypto limité...)");
     }
 
-    public Map<String, String> verifyAuthenticationEID(String registreNational, String message) {
+    public JSONObject verifyAuthenticationEID(String registreNational, String message) throws JSONException {
         Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null) {
@@ -110,10 +119,12 @@ public class AuthenticationServ {
         // S'il y a une inscription en cours, on la termine
         registrationServ.deleteRegistration(registrationServ.getRegistrationByRegistreNational(auth.getRegistreNational()));
 
-        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
+
+        return new JSONObject()
+                .put("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public Map<String, String> requestAuthenticationRFID(String registreNational, String device) {
+    public JSONObject requestAuthenticationRFID(String registreNational, String device) throws JSONException {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -132,10 +143,13 @@ public class AuthenticationServ {
 
         authenticationRepository.save(auth);
 
-        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Le code est 1234 (budget crypto limité...)");
+        return new JSONObject()
+                .put("idAuthentication", auth.getId())
+                .put("registreNational",registreNational)
+                .put("message", "Le code est 1234");
     }
 
-    public Map<String, String> verifyAuthenticationRFID(String registreNational, String code) {
+    public JSONObject verifyAuthenticationRFID(String registreNational, String code) throws JSONException {
         Authentication auth =  getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
@@ -149,10 +163,12 @@ public class AuthenticationServ {
         // On termine l'authentification
         finishAuthentification(auth);
 
-        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
+
+        return new JSONObject()
+                .put("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public Map<String, String> requestAuthenticationSMSEMAIL(String registreNational, String device) {
+    public JSONObject requestAuthenticationSMSEMAIL(String registreNational, String device) throws JSONException {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
@@ -173,10 +189,13 @@ public class AuthenticationServ {
 
         System.out.println("Besoin d'envoyer un message (AuthenticationServ)");
 
-        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Le code est 1234");
+        return new JSONObject()
+                .put("idAuthentication", auth.getId())
+                .put("registreNational",registreNational)
+                .put("message", "Le code est 1234");
     }
 
-    public Map<String, String> verifyAuthenticationSMSEMAIL(String registreNational, String code) {
+    public JSONObject verifyAuthenticationSMSEMAIL(String registreNational, String code) throws JSONException {
         Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
@@ -191,19 +210,25 @@ public class AuthenticationServ {
         finishAuthentification(auth);
 
 
-        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
+        return new JSONObject()
+                .put("JWT", getJwtTokenFromAuthentication(auth));
     }
 
-    public Map<String, String> requestAuthenticationMasiId(String registreNational, String device) {
+    public JSONObject requestAuthenticationMasiId(String registreNational, String device) throws JSONException {
         if(!isAuthenticationRequestAllowed(registreNational))
             return null;
 
+        // On génère l'authentification et son challenge
         Authentication auth = new Authentication();
-
-        System.out.println("Besoin de selectionner les images (AuthenticationServ)");
         Challenge challenge = new Challenge();
-        challenge.setImages(List.of("2", "4", "7"));
-        challenge.setRightImage("4");
+
+        // On génère 3 images aléatoires
+        var images = randomGenerator.getRandomImages();
+        challenge.setImages(images);
+
+        // On en sélectionne une aléatoirement
+        var imageSelected = images.get(new Random().nextInt(images.size()));
+        challenge.setRightImage(imageSelected);
         challengeServ.insertChallenge(challenge);
 
         auth.setType("MasiId");
@@ -214,10 +239,13 @@ public class AuthenticationServ {
 
         authenticationRepository.save(auth);
 
-        return Map.of("idAuthentication", auth.getId(), "registreNational",registreNational, "message", "Choix entre 2,4,7 (correct : 4)");
+        return new JSONObject()
+                .put("idAuthentication", auth.getId())
+                .put("registreNational",registreNational)
+                .put("message", String.format("Choix entre %s (correct : %s)",images.toString(), imageSelected));
     }
 
-    public Map<String, String> verifyAuthenticationMasiId(String registreNational, String image) {
+    public JSONObject verifyAuthenticationMasiId(String registreNational, String image) throws JSONException {
         Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
@@ -231,8 +259,8 @@ public class AuthenticationServ {
         // On termine l'authentification
         finishAuthentification(auth);
 
-
-        return Map.of("JWT", getJwtTokenFromAuthentication(auth));
+        return new JSONObject()
+                .put("JWT", getJwtTokenFromAuthentication(auth));
     }
 
 

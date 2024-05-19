@@ -4,6 +4,8 @@ package com.example.demo.REST;
 import com.example.demo.ORM.model.Authentication;
 import com.example.demo.ORM.service.AuthenticationServ;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,63 +44,63 @@ public class authenticationAPIController {
     }
 
     @PutMapping
-    public ResponseEntity<String> requeteAuthentication(@RequestBody Map<String, String> body) {
+    public ResponseEntity<String> requeteAuthentication(@RequestBody Map<String, String> body) throws JSONException {
         var method = body.get("method");
         var registreNational = body.get("registreNational");
         var device = body.get("device");
 
         if(method == null || registreNational == null || device == null) {
-            return new ResponseEntity<>("Method or Registre National or device missing", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new JSONObject().put("Error", "Method or Registre National or device missing").toString(), HttpStatus.BAD_REQUEST);
         }
 
-        String result;
+        JSONObject result;
         switch (method) {
-            case "EID" -> result = authenticationServ.requestAuthenticationEID(registreNational,device).toString();
-            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational,device).toString();
-            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational,device).toString();
-            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational,device).toString();
+            case "EID" -> result = authenticationServ.requestAuthenticationEID(registreNational,device);
+            case "RFID" -> result = authenticationServ.requestAuthenticationRFID(registreNational,device);
+            case "SMSEMAIL" -> result = authenticationServ.requestAuthenticationSMSEMAIL(registreNational,device);
+            case "MasiId" -> result = authenticationServ.requestAuthenticationMasiId(registreNational,device);
             default -> {
-                return new ResponseEntity<>("Wrong method", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new JSONObject().put("Error","Wrong method").toString(), HttpStatus.BAD_REQUEST);
             }
         }
 
         if(result == null)
-            return new ResponseEntity<>("Authentication request denied", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new JSONObject().put("Error","Authentication request denied").toString(), HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result.toString(), HttpStatus.OK);
     }
 
     @PutMapping("/{registreNational}")
-    public ResponseEntity<String> validationRequeteAuthentification(@PathVariable String registreNational, @RequestBody bodyContent body) {
+    public ResponseEntity<String> validationRequeteAuthentification(@PathVariable String registreNational, @RequestBody bodyContent body) throws JSONException {
         // RFID
         if (body.getCODE() != null) {
-            var JWT = authenticationServ.verifyAuthenticationRFID(registreNational, body.getCODE()).toString();
+            var JWT = authenticationServ.verifyAuthenticationRFID(registreNational, body.getCODE());
             if (JWT != null) {
-                return new ResponseEntity<>(JWT, HttpStatus.OK);
+                return new ResponseEntity<>(JWT.toString(), HttpStatus.OK);
             }
         }
         // SMS/EMAIL
         else if (body.getDigest() != null) {
-            var JWT = authenticationServ.verifyAuthenticationSMSEMAIL(registreNational, body.getDigest()).toString();
+            var JWT = authenticationServ.verifyAuthenticationSMSEMAIL(registreNational, body.getDigest());
             if (JWT != null) {
-                return new ResponseEntity<>(JWT, HttpStatus.OK);
+                return new ResponseEntity<>(JWT.toString(), HttpStatus.OK);
             }
         }
         // MasiId
         else if (body.getIcon() != null) {
-            var JWT = authenticationServ.verifyAuthenticationMasiId(registreNational, body.getIcon()).toString();
+            var JWT = authenticationServ.verifyAuthenticationMasiId(registreNational, body.getIcon());
             if (JWT != null) {
-                return new ResponseEntity<>(JWT, HttpStatus.OK);
+                return new ResponseEntity<>(JWT.toString(), HttpStatus.OK);
             }
         }
         // EID
         else if (body.getChallenge() != null) {
-            var JWT = authenticationServ.verifyAuthenticationEID(registreNational, body.getChallenge()).toString();
+            var JWT = authenticationServ.verifyAuthenticationEID(registreNational, body.getChallenge());
             if (JWT != null) {
-                return new ResponseEntity<>(JWT, HttpStatus.OK);
+                return new ResponseEntity<>(JWT.toString(), HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>("The validation method does not match the current authentication request (if any exists)", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new JSONObject().put("Error","The validation method does not match the current authentication request (if any exists)").toString(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping
