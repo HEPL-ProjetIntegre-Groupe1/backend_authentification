@@ -11,6 +11,6 @@ public class APIExceptionHandler {
     public ResponseEntity<String> handleException(Exception e) throws NoResourceFoundException {
         if(e instanceof NoResourceFoundException)
             throw (NoResourceFoundException) e;
-        return new ResponseEntity<>("This service is currently unavailable. Please try again later", org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("This service is currently unavailable. Please try again later " + e.getMessage(), org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

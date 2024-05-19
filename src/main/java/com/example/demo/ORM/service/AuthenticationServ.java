@@ -55,6 +55,9 @@ public class AuthenticationServ {
     }
 
     private boolean isAuthenticationRequestAllowed(String registreNational) {
+        if(utilisateurRepository.findUtilisateurByRegistreNational(registreNational) == null)
+            return false;
+
         // Si une inscription est en cours, l'utilisateur doit d'abord finir de s'authentifier par EID
         if(registrationServ.getRegistrationByRegistreNational(registreNational) != null) {
             return false;
