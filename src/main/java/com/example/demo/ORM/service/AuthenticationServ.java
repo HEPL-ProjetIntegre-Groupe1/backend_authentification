@@ -83,7 +83,8 @@ public class AuthenticationServ {
         Authentication auth = new Authentication();
 
         Challenge challenge = new Challenge();
-        challenge.setUncryptedMessage("1234");
+        var uncryptedMessage = randomGenerator.generateRandomString();
+        challenge.setUncryptedMessage(uncryptedMessage);
         challengeServ.insertChallenge(challenge);
 
         auth.setType("EID");
@@ -99,7 +100,7 @@ public class AuthenticationServ {
         return new JSONObject()
                 .put("idAuthentication", auth.getId())
                 .put("registreNational",registreNational)
-                .put("message", "Le message est 1234 (budget crypto limité...)");
+                .put("message", String.format("Le message est %s (budget crypto limité...)", uncryptedMessage));
     }
 
     public JSONObject verifyAuthenticationEID(String registreNational, String message) throws JSONException {
@@ -132,10 +133,12 @@ public class AuthenticationServ {
             return null;
 
         Authentication auth = new Authentication();
-
-        System.out.println("Besoin de générer un challenge (AuthenticationServ)");
         Challenge challenge = new Challenge();
-        challenge.setCode("1234");
+
+        // On génère un code aléatoire
+        var code = randomGenerator.generateRandomCode();
+        challenge.setCode(code);
+
         challengeServ.insertChallenge(challenge);
 
         auth.setType("RFID");
@@ -149,7 +152,7 @@ public class AuthenticationServ {
         return new JSONObject()
                 .put("idAuthentication", auth.getId())
                 .put("registreNational",registreNational)
-                .put("message", "Le code est 1234");
+                .put("message", "Le code est " + code);
     }
 
     public JSONObject verifyAuthenticationRFID(String registreNational, String code) throws JSONException {
@@ -176,10 +179,11 @@ public class AuthenticationServ {
             return null;
 
         Authentication auth = new Authentication();
-
-        System.out.println("Besoin de générer un challenge (AuthenticationServ)");
         Challenge challenge = new Challenge();
-        challenge.setCode("1234");
+
+        var code = randomGenerator.generateRandomCode();
+        challenge.setCode(code);
+
         challengeServ.insertChallenge(challenge);
 
         auth.setType("SMSEMAIL");
@@ -195,7 +199,7 @@ public class AuthenticationServ {
         return new JSONObject()
                 .put("idAuthentication", auth.getId())
                 .put("registreNational",registreNational)
-                .put("message", "Le code est 1234");
+                .put("message", "Le code est " + code);
     }
 
     public JSONObject verifyAuthenticationSMSEMAIL(String registreNational, String code) throws JSONException {

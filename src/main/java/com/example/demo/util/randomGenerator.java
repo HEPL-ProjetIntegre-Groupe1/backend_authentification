@@ -2,9 +2,7 @@ package com.example.demo.util;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class randomGenerator {
@@ -26,5 +24,17 @@ public class randomGenerator {
     public List<String> getRandomImages() {
         Collections.shuffle(images);
         return images.subList(0, 3);
+    }
+
+    public String generateRandomString() {
+        return UUID.randomUUID().toString();
+    }
+
+    public String generateRandomCode() {
+        Random random = new Random();
+        // minimum is 100000
+        // maximum is 999999
+        int code = random.nextInt(900000) + 100000;
+        return String.valueOf(code);
     }
 }
