@@ -101,6 +101,17 @@ public class authenticationAPIController {
         return new ResponseEntity<>("The validation method does not match the current authentication request (if any exists)", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @DeleteMapping
+    public ResponseEntity<String> deleteAuthentication(@RequestParam(name = "authenticationId") String authenticationId) {
+        Authentication authentication = authenticationServ.getAuthenticationById(authenticationId);
+        if (authentication == null) {
+            return ResponseEntity.badRequest().body("Authentication not found");
+        }
+        if(authenticationServ.deleteAuthentication(authentication))
+            return ResponseEntity.ok("Authentication deleted");
+        return ResponseEntity.badRequest().body("Could not delete authentication");
+    }
+
     public static class bodyContent {
         @JsonProperty("CODE")
         private String CODE;

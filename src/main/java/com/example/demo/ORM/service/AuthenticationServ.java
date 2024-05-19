@@ -33,10 +33,6 @@ public class AuthenticationServ {
         return authenticationRepository.findById(id).orElse(null);
     }
 
-    public List<Authentication> getAuthenticationByRegistreNational(String registreNational) {
-        return authenticationRepository.getAuthenticationsByRegistreNational(registreNational);
-    }
-
     public Authentication getOngoingAuthenticationByResgistreNational(String registreNational) {
         List<Authentication> auths =  authenticationRepository.getAuthenticationsByRegistreNationalAndOnGoingEquals(registreNational, true);
         if(auths.isEmpty())
@@ -44,10 +40,12 @@ public class AuthenticationServ {
         return auths.get(0);
     }
 
-    public void deleteAuthentication(Authentication authentication) {
+    public boolean deleteAuthentication(Authentication authentication) {
         if(authentication != null) {
             authenticationRepository.delete(authentication);
+            return true;
         }
+        return false;
     }
 
     private boolean isAuthenticationRequestAllowed(String registreNational) {

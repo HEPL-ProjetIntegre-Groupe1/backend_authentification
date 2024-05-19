@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/masiId")
-public class masiIdAPIController {
+public class inscriptionAPIController {
     @Autowired
     UtilisateurServ utilisateurServ;
 

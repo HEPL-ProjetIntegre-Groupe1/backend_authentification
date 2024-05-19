@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/utilisateur")
-public class utilisateurAPIController {
+public class utilisateurCRUDAPIController {
     @Autowired
     UtilisateurServ utilisateurServ;
 
