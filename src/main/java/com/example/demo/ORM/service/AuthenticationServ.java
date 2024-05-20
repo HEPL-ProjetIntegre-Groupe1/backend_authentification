@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -284,5 +283,12 @@ public class AuthenticationServ {
     private void finishAuthentification(Authentication auth) {
         auth.setOnGoing(false);
         authenticationRepository.save(auth);
+    }
+
+    public Integer getComputerAuthenticationsByRegistreNational(String registreNational) {
+        return authenticationRepository.getAuthenticationsByRegistreNationalAndDeviceConnexionEquals(registreNational, "Computer").size();
+    }
+    public Integer getPhoneAuthenticationsByRegistreNational(String registreNational) {
+        return authenticationRepository.getAuthenticationsByRegistreNationalAndDeviceConnexionEquals(registreNational, "Phone").size();
     }
 }

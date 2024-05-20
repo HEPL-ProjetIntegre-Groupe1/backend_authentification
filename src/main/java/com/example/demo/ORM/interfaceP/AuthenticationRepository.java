@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface AuthenticationRepository extends MongoRepository<Authentication, String> {
-    List<Authentication> getAuthenticationsByRegistreNational(String registreNational);
+    List<Authentication> getAuthenticationsByRegistreNationalAndDeviceConnexionEquals(String registreNational, String deviceConnexion);
     List<Authentication> getAuthenticationsByRegistreNationalAndOnGoingEquals(String registreNational, boolean onGoing);
 }

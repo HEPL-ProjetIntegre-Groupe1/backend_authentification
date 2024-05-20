@@ -3,6 +3,7 @@ package com.example.demo.REST;
 
 import com.example.demo.ORM.model.Authentication;
 import com.example.demo.ORM.service.AuthenticationServ;
+import com.example.demo.util.ExportDatabase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -157,5 +158,18 @@ public class authenticationAPIController {
         }
 
         // getters and setters
+    }
+    @RestController
+    @RequestMapping("/databaseExport")
+    public class databaseExport {
+        @Autowired
+        private ExportDatabase exportDatabase;
+
+        @PostMapping
+        public ResponseEntity<String> exportDatabase() {
+            exportDatabase.filterDatabase();
+            exportDatabase.exportDatabase();
+            return ResponseEntity.ok("ok");
+        }
     }
 }
