@@ -26,7 +26,7 @@ public class Utilisateur {
   @Field("password")
   private String password;
   @Field("adresse")
-  private String adresse;
+  private Adresse adresse;
   @Field("certificat")
   private String certificat;
   @Field
@@ -102,11 +102,11 @@ public class Utilisateur {
     this.password = password;
   }
 
-  public String getAdresse() {
+  public Adresse getAdresse() {
     return adresse;
   }
 
-  public void setAdresse(String adresse) {
+  public void setAdresse(Adresse adresse) {
     this.adresse = adresse;
   }
 
