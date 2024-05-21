@@ -89,7 +89,7 @@ public class authenticationAPIController {
         }
         // MasiId
         else if (body.getIcon() != null) {
-            var JWT = authenticationServ.verifyAuthenticationMasiId(registreNational, body.getIcon());
+            var JWT = authenticationServ.verifyAuthenticationMasiId(registreNational);
             if (JWT != null) {
                 return new ResponseEntity<>(JWT.toString(), HttpStatus.OK);
             }

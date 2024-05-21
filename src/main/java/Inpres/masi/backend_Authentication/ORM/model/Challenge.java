@@ -18,6 +18,8 @@ public class Challenge {
   private List<String> images;
   @Field("rightImage")
   private String rightImage;
+  @Field("masiIdValidated")
+  private boolean masiIdValidated;
 
 
   public String getId() {
@@ -61,5 +63,13 @@ public class Challenge {
 
   public void setRightImage(String rightImage) {
     this.rightImage = rightImage;
+  }
+
+  public boolean isMasiIdValidated() {
+    return masiIdValidated;
+  }
+
+  public void setMasiIdValidated(boolean masiIdValidated) {
+    this.masiIdValidated = masiIdValidated;
   }
 }

@@ -254,14 +254,34 @@ public class AuthenticationServ {
                 .put("message", String.format("Choix entre %s (correct : %s)",images.toString(), imageSelected));
     }
 
-    public JSONObject verifyAuthenticationMasiId(String registreNational, String image) throws JSONException {
+    public boolean sendImageChoiceMasiId(String registreNational, String imageSelected) {
+        Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
+
+        if(auth == null) {
+            return false;
+        }
+
+        var actualMessage = auth.getChallengeRef().getRightImage();
+        if(!auth.getType().equals("MasiId") ||!actualMessage.equals(imageSelected)) {
+            return false;
+        }
+
+        // MasiId a validé le challenge. L'utilisateur web doit maintenant récupérer son JWT
+        auth.getChallengeRef().setMasiIdValidated(true);
+        challengeServ.insertChallenge(auth.getChallengeRef());
+
+        return true;
+    }
+
+    public JSONObject verifyAuthenticationMasiId(String registreNational) throws JSONException {
         Authentication auth = getOngoingAuthenticationByResgistreNational(registreNational);
 
         if(auth == null || isAuthenticationVerificationAllowed(auth)) {
             return null;
         }
 
-        if(!auth.getType().equals("MasiId") || !auth.getChallengeRef().getRightImage().equals(image)) {
+        // On vérifie si l'app MasiId a validé l'authentification
+        if(!auth.getType().equals("MasiId") || !auth.getChallengeRef().isMasiIdValidated()) {
             return null;
         }
 
